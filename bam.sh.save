@@ -1,0 +1,42 @@
+#Prints flagstatistics of bam file.
+samtools flagstat *.bam
+
+#Prints number of alignments in bam file. column 3 includes unmmaped reads excluded using "-v".
+samtools view *.bam | cut -f3 | grep -v '*' | wc -l
+
+#Prints alignments with reads mate unmmapped,  which is marked with a * in column 7 
+samtools view athal_wu_0_A.bam | cut -f7 | grep '*' | wc -l
+
+#Prints deletions , in column 6 (cigar string) marked by D
+samtools view athal_wu_0_A.bam | cut -f6 | grep 'D' | wc -l
+
+#Prints reads with mated mapped on same chromosome, marked by '=' in column 7
+samtools view athal_wu_0_A.bam | cut -f7 | grep '=' | wc -l
+
+#Prints spliced alignments, in column 6 marked by 'N' for introns
+samtools view athal_wu_0_A.bam | cut -f6 | grep 'N' | wc -l
+
+#Prints number of sequences in alignment file, found in header denoted by 'SN:'
+samtools view -H athal_wu_0_A.bam | grep 'SN:' | wc -l
+
+#Length of sequnce is denoted by 'LN:' after @ sequnce
+samtools view -H athal_wu_0_A.bam | grep 'SN:' | more
+
+#Prints alignment tool used, denoted by @PG in header
+samtools view -H athal_wu_0_A.bam | grep '^@PG' | more
+
+#Prints read identifier(name) of first alignment
+samtools view athal_wu_0_A.bam | head -1 | cut -f1 | more
+
+#Prints overlaps using bam and gtf files
+bedtools intersect -wo -abam athal_wu_0_A.bam -b athal_wu_0_A_annot.gtf -bed | wc -l
+
+#Prints overlaps with 10 bases or more, subtract '1' from the answer since bases with 10 start above that one in column 22.
+bedtools intersect -wo -abam athal_wu_0_A.bam -b athal_wu_0_A_annot.gtf -bed | cut -f22 | sort -nrk1 | grep -n "^9" | head -1
+
+#Prints alignments that overlap annotations, minimum columns needed are 11 to 5
+bedtools intersect -wo -abam athal_wu_0_A.bam -b athal_wu_0_A_annot.gtf -bed | cut -f1-12 | sort -u | wc -l
+
+#Prints exons with reads mapped to them, exons are defined by columns 13 to 21
+bedtools intersect -wo -abam athal_wu_0_A.bam -b athal_wu_0_A_annot.gtf -bed | cut -f13-21
+ | sort -u | wc -l
