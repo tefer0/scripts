@@ -12,3 +12,18 @@ $ git remote -v
 git branch -M main
 
 git push -u origin main
+
+
+#large files
+#once
+git lfs install
+
+#track types
+git lfs track "*.psd"
+
+#add git attributes
+git add .gitattributes
+
+git add file.psd
+git commit -m "Add design file"
+git push origin main
